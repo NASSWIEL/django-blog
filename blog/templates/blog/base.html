@@ -16,16 +16,16 @@
     <link rel="stylesheet" type="text/css" href="{% static 'blog/main.css' %}">
 
     {% if title %}
-        <title>Django Blog - {{ title }}</title>
+        <title>Inkwell Stories - {{ title }}</title>
     {% else %}
-        <title>Django Blog</title>
+        <title>Inkwell Stories</title>
     {% endif %}
 </head>
 <body>
     <header class="site-header">
       <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
         <div class="container">
-          <a class="navbar-brand mr-4" href="{% url 'blog-home' %}">Django Blog</a>
+          <a class="navbar-brand mr-4" href="{% url 'blog-home' %}">Inkwell Stories</a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
           </button>
@@ -61,28 +61,89 @@
           {% block content %}{% endblock %}
         </div>
         <div class="col-md-4">
+          <!-- Categories Section -->
+          <div class="content-section mb-3">
+            <h4><i class="fas fa-tags"></i> Categories</h4>
+            <div class="category-list">
+              <a href="?category=politics" class="badge badge-politics m-1">Politics</a>
+              <a href="?category=religion" class="badge badge-religion m-1">Religion</a>
+              <a href="?category=history" class="badge badge-history m-1">History</a>
+              <a href="?category=technology" class="badge badge-technology m-1">Technology</a>
+              <a href="?category=science" class="badge badge-science m-1">Science</a>
+              <a href="?category=culture" class="badge badge-culture m-1">Culture</a>
+              <a href="?category=sports" class="badge badge-sports m-1">Sports</a>
+              <a href="?category=entertainment" class="badge badge-entertainment m-1">Entertainment</a>
+              <a href="?" class="badge badge-all m-1">All Posts</a>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          {% if user.is_authenticated %}
+          <div class="content-section mb-3">
+            <h4><i class="fas fa-bolt"></i> Quick Actions</h4>
+            <div class="quick-actions">
+              <a href="{% url 'post-create' %}" class="btn btn-primary btn-block mb-2">
+                <i class="fas fa-plus"></i> Write New Post
+              </a>
+              <a href="{% url 'profile' %}" class="btn btn-outline-primary btn-block">
+                <i class="fas fa-user"></i> My Profile
+              </a>
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- Latest Posts -->
+          <div class="content-section mb-3">
+            <h4><i class="fas fa-clock"></i> Latest Posts</h4>
+            <div class="latest-posts">
+              {% for post in latest_posts %}
+              <div class="latest-post-item mb-2">
+                <small class="text-muted">{{ post.date_posted|date:"M d" }}</small>
+                <br>
+                <a href="{% url 'post-detail' post.pk %}" class="latest-post-title">{{ post.title|truncatechars:40 }}</a>
+                <small class="text-muted d-block">by {{ post.author.username }}</small>
+              </div>
+              {% empty %}
+              <p class="text-muted">No posts yet.</p>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Popular Categories -->
+          <div class="content-section mb-3">
+            <h4><i class="fas fa-chart-pie"></i> Popular Categories</h4>
+            <div class="popular-categories">
+              {% for category in popular_categories %}
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="category-name">{{ category.name }}</span>
+                <span class="badge badge-secondary">{{ category.count }}</span>
+              </div>
+              {% empty %}
+              <p class="text-muted">No categories yet.</p>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Blog Stats -->
           <div class="content-section">
-            <h3>Our Sidebar</h3>
-            <p class='text-muted'>You can put any information here you'd like.
-              <ul class="list-group">
-                <li class="list-group-item list-group-item-light">Latest Posts</li>
-                <li class="list-group-item list-group-item-light">Announcements</li>
-                <li class="list-group-item list-group-item-light">Calendars</li>
-                <li class="list-group-item list-group-item-light">etc</li>
-              </ul>
-            </p>
+            <h4><i class="fas fa-chart-bar"></i> Blog Stats</h4>
+            <div class="blog-stats">
+              <div class="stat-item mb-2">
+                <strong>{{ total_posts }}</strong> Total Posts
+              </div>
+              <div class="stat-item mb-2">
+                <strong>{{ total_users }}</strong> Writers
+              </div>
+              <div class="stat-item mb-2">
+                <strong>{{ total_categories }}</strong> Categories
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </main>
 
-    <!-- Floating New Post Button for authenticated users (excluding About page) -->
-    {% if user.is_authenticated and request.resolver_match.url_name != 'blog-about' %}
-    <a href="{% url 'post-create' %}" class="floating-btn">
-        <i class="fas fa-pencil-alt"></i>
-        New Post
-    </a>
-    {% endif %}
+
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

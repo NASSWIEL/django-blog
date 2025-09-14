@@ -86,9 +86,9 @@
 
 <!-- User's Posts Section -->
 <div class="content-section">
-  <h3>My Posts ({{ user_posts.count }})</h3>
-  {% for post in user_posts %}
-    <article class="media content-section {% if post.content|length > 300 %}long-content{% else %}short-content{% endif %}">
+  <h3>My Posts ({{ posts.count }})</h3>
+  {% for post in posts %}
+    <article class="media content-section">
       <div class="media-body">
         <div class="article-metadata">
           <small class="text-muted">{{ post.date_posted|date:"F d, Y at H:i" }}</small>
@@ -101,28 +101,22 @@
               <i class="fas fa-edit"></i> Edit
             </a>
             <a href="{% url 'post-delete' post.pk %}" class="btn btn-outline-danger btn-sm">
-              <i class="fas fa-trash"></i> Delete
+              <i class="fas fa-trash-alt"></i> Delete
             </a>
           </div>
         </div>
-        <h2 class="article-title">
-          <a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a>
-        </h2>
+        <h4 class="article-title"><a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a></h4>
         <div class="article-content">
-          {% if post.content|length > 300 %}
-            <!-- Long post (>300 chars): Show preview with Read more functionality -->
-            <p class="post-preview" id="profile-preview-{{ post.pk }}">
-              {{ post.content|truncatechars:250 }}
-              <a href="#" class="text-info read-more-link" onclick="expandProfilePost({{ post.pk }}); return false;">Read more...</a>
-            </p>
-            <div class="post-full-content" id="profile-full-{{ post.pk }}" style="display: none;">
-              <p>{{ post.content|linebreaks }}</p>
-              <a href="#" class="text-info read-less-link" onclick="collapseProfilePost({{ post.pk }}); return false;">Show less</a>
+            {% if post.content|length > 300 %}
+            <p class="post-content-preview">{{ post.content|truncatechars:250 }}</p>
+            <a href="#" class="read-more-link" data-post-id="{{ post.pk }}">Read more...</a>
+            <div class="full-post-content" id="full-post-{{ post.pk }}" style="display:none;">
+                <p>{{ post.content|linebreaks }}</p>
+                <a href="#" class="read-less-link" data-post-id="{{ post.pk }}">Show less</a>
             </div>
-          {% else %}
-            <!-- Short post (≤300 chars): Show full content directly -->
-            <p class="post-full-display">{{ post.content|linebreaks }}</p>
-          {% endif %}
+            {% else %}
+            <p class="article-content">{{ post.content|linebreaks }}</p>
+            {% endif %}
         </div>
       </div>
     </article>
@@ -174,27 +168,6 @@
     
     // Clear any file input
     document.getElementById('id_image').value = '';
-  }
-
-  // Profile post expansion functions
-  function expandProfilePost(postId) {
-      const preview = document.getElementById('profile-preview-' + postId);
-      const fullContent = document.getElementById('profile-full-' + postId);
-      
-      if (preview && fullContent) {
-          preview.style.display = 'none';
-          fullContent.style.display = 'block';
-      }
-  }
-
-  function collapseProfilePost(postId) {
-      const preview = document.getElementById('profile-preview-' + postId);
-      const fullContent = document.getElementById('profile-full-' + postId);
-      
-      if (preview && fullContent) {
-          preview.style.display = 'block';
-          fullContent.style.display = 'none';
-      }
   }
 </script>
 {% endblock content %}

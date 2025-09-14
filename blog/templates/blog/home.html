@@ -1,28 +1,27 @@
 {% extends "blog/base.html" %}
 {% block content %} 
 {% for post in posts %}
-<article class="media content-section {% if post.content|length > 300 %}long-content{% else %}short-content{% endif %}" id="post-{{ post.pk }}" style="padding: 5px 12px 4px 12px !important; margin-bottom: 10px !important;">
-  <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="Author Profile" style="margin-right: 10px !important; margin-top: 0 !important;">
-  <div class="media-body" style="padding-top: 0 !important; margin-top: 0 !important;">
-    <div class="article-metadata" style="margin-bottom: 1px !important; padding-bottom: 1px !important;">
-      <a class="mr-2" href="#">{{ post.author }}</a>
-      <small class="text-muted">{{ post.date_posted|date:"F d, Y at H:i" }}</small>
+<article class="media content-section">
+  <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
+  <div class="media-body">
+    <div class="article-metadata">
+      <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+      <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
+      <span class="badge badge-primary ml-2">{{ post.get_category_display_name }}</span>
     </div>
-    <h2 style="margin-bottom: 2px !important; margin-top: 3px !important;"><a class="article-title" href="{% url 'post-detail' post.pk %}">{{ post.title }}</a></h2>
-    <div class="article-content" style="margin-top: 0 !important;">
+    <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+    <div class="article-content">
       {% if post.content|length > 300 %}
-        <!-- Long post (>300 chars): Show preview with Read more functionality -->
-        <p class="post-preview" id="preview-{{ post.pk }}" style="margin-bottom: 5px !important; margin-top: 0 !important;">
+        <p class="post-preview" id="preview-{{ post.pk }}">
           {{ post.content|truncatechars:250 }}
           <a href="#" class="text-info read-more-link" onclick="expandPost({{ post.pk }}); return false;">Read more...</a>
         </p>
-        <div class="post-full-content" id="full-{{ post.pk }}" style="display: none; margin-bottom: 0 !important; margin-top: 0 !important;">
-          <p style="margin-bottom: 5px !important; margin-top: 0 !important;">{{ post.content|linebreaks }}</p>
+        <div class="post-full-content" id="full-{{ post.pk }}" style="display: none;">
+          <p>{{ post.content|linebreaks }}</p>
           <a href="#" class="text-info read-less-link" onclick="collapsePost({{ post.pk }}); return false;">Show less</a>
         </div>
       {% else %}
-        <!-- Short post (≤300 chars): Show full content directly -->
-        <p class="post-full-display" style="margin-bottom: 0 !important; margin-top: 0 !important;">{{ post.content|linebreaks }}</p>
+        <div class="post-full-display">{{ post.content|linebreaks }}</div>
       {% endif %}
     </div>
   </div>

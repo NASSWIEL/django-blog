@@ -59,11 +59,11 @@ def profile(request):
         p_form = ProfileUpdateForm(instance=request.user.profile)
     
     # Get user's posts
-    user_posts = request.user.post_set.all().order_by('-date_posted')
+    posts = request.user.post_set.all().order_by('-date_posted')
     
     context = {
         'u_form': u_form,
         'p_form': p_form,
-        'user_posts': user_posts
+        'posts': posts
     }
     return render(request,'users/profile.html', context)

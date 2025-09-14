@@ -14,4 +14,33 @@
         </div>
     </form>
 </div>
+
+<script>
+function toggleCustomCategory(categoryValue) {
+    const customCategoryField = document.getElementById('id_custom_category');
+    const customCategoryLabel = document.querySelector('label[for="id_custom_category"]');
+    const customCategoryHelp = customCategoryField.parentNode.querySelector('.form-text');
+    
+    if (categoryValue === 'other') {
+        customCategoryField.style.display = 'block';
+        customCategoryField.required = true;
+        if (customCategoryLabel) customCategoryLabel.style.display = 'block';
+        if (customCategoryHelp) customCategoryHelp.style.display = 'block';
+    } else {
+        customCategoryField.style.display = 'none';
+        customCategoryField.required = false;
+        customCategoryField.value = '';
+        if (customCategoryLabel) customCategoryLabel.style.display = 'none';
+        if (customCategoryHelp) customCategoryHelp.style.display = 'none';
+    }
+}
+
+// Initialize the form state when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    const categorySelect = document.getElementById('id_category');
+    if (categorySelect) {
+        toggleCustomCategory(categorySelect.value);
+    }
+});
+</script>
 {% endblock content %}

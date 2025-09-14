@@ -4,18 +4,27 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from .models import Post
 from .forms import PostForm
+from django.contrib.auth.models import User
+from django.http import HttpResponseForbidden
 # Create your views here.
 
 
 def home(request):
     posts = Post.objects.all().order_by('-date_posted')
+    
+    # Filter by category if specified
+    category = request.GET.get('category')
+    if category and category != 'all':
+        posts = posts.filter(category=category)
+    
     paginator = Paginator(posts, 10)  # Show 10 posts per page
     
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
     context = {
-        'posts': page_obj
+        'posts': page_obj,
+        'current_category': category
     }
     return render (request, 'blog/home.html',context)
 
@@ -65,9 +74,16 @@ def post_edit(request, pk):
 
 @login_required
 def post_delete(request, pk):
-    post = get_object_or_404(Post, pk=pk, author=request.user)
+    post = get_object_or_404(Post, pk=pk)
+    if request.user != post.author:
+        return HttpResponseForbidden()
     if request.method == 'POST':
         post.delete()
         messages.success(request, 'Your post has been deleted!')
-        return redirect('profile')
-    return render(request, 'blog/post_delete.html', {'post': post})
+        return redirect('blog-home')
+    return render(request, 'blog/post_confirm_delete.html', {'post': post})
+
+def user_posts(request, username):
+    user = get_object_or_404(User, username=username)
+    posts = Post.objects.filter(author=user).order_by('-date_posted')
+    return render(request, 'blog/user_posts.html', {'posts': posts, 'page_user': user})
