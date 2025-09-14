@@ -1,0 +1,295 @@
+/* CSS Version 2.0 - Compact Layout - Updated 2025-09-14 03:06 */
+body {
+    background: #fafafa;
+    color: #333333;
+    margin-top: 5rem;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    color: #444444;
+  }
+  
+  ul {
+    margin: 0;
+  }
+  
+  .bg-steel {
+    background-color: #5f788a;
+  }
+  
+  .site-header .navbar-nav .nav-link {
+    color: #cbd5db;
+  }
+  
+  .site-header .navbar-nav .nav-link:hover {
+    color: #ffffff;
+  }
+  
+  .site-header .navbar-nav .nav-link.active {
+    font-weight: 500;
+  }
+  
+  .content-section {
+    background: #ffffff;
+    padding: 8px 16px;
+    border: 1px solid #dddddd;
+    border-radius: 3px;
+    margin-bottom: 15px;
+  }
+  
+  .article-title {
+    color: #444444;
+    margin-bottom: 5px; /* Reduce space between title and content */
+  }
+  
+  .article-title h2 {
+    margin-bottom: 5px; /* Reduce margin on h2 elements */
+  }
+  
+  a.article-title:hover {
+    color: #428bca;
+    text-decoration: none;
+  }
+  
+  .article-content {
+    white-space: pre-line;
+    margin-top: 0; /* Remove top margin */
+  }
+  
+  .article-img {
+    height: 65px;
+    width: 65px;
+    margin-right: 16px;
+  }
+  
+  .article-metadata {
+    padding-bottom: 1px;
+    margin-bottom: 2px; /* Reduce space after metadata */
+    border-bottom: 1px solid #e3e3e3
+  }
+  
+  .article-metadata a:hover {
+    color: #333;
+    text-decoration: none;
+  }
+  
+  .article-svg {
+    width: 25px;
+    height: 25px;
+    vertical-align: middle;
+  }
+  
+  .account-img {
+    height: 125px;
+    width: 125px;
+    margin-right: 20px;
+    margin-bottom: 16px;
+  }
+  
+  .account-heading {
+    font-size: 2.5rem;
+  }
+
+  .floating-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    background-color: #5f788a;
+    color: white;
+    border: 2px solid #5f788a;
+    border-radius: 8px;
+    padding: 10px 16px;
+    text-decoration: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .floating-btn:hover {
+    background-color: white;
+    color: #5f788a;
+    border-color: #5f788a;
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+  }
+
+  .floating-btn i {
+    font-size: 16px;
+  }
+
+  .clickable-profile-img:hover {
+    opacity: 0.8;
+    transform: scale(1.05);
+    transition: all 0.3s ease;
+  }
+
+  .clickable-profile-img {
+    transition: all 0.3s ease;
+  }
+
+  /* Dynamic post content styling */
+  .article-content {
+    white-space: pre-line;
+    align-self: flex-start; /* Align content to top instead of center */
+    margin-top: 0; /* Remove top margin */
+  }
+
+  .post-full-display {
+    margin: 0;
+    padding: 0;
+    line-height: 1.5;
+  }
+
+  .post-preview {
+    margin: 0;
+    padding: 0;
+    line-height: 1.5;
+  }
+
+  .post-full-content {
+    margin: 0;
+    padding: 0;
+    line-height: 1.5;
+  }
+
+  /* Media object adjustments for short content */
+  .media {
+    display: flex;
+    align-items: flex-start; /* Align items to top instead of center */
+  }
+
+  .media-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Start from top */
+  }
+
+  /* Short content containers - extremely compact */
+  .content-section.short-content {
+    min-height: auto !important; /* Let container adjust to content */
+    padding: 5px 12px 4px 12px !important; /* Very compact padding */
+  }
+
+  /* Long content containers */
+  .content-section.long-content {
+    min-height: auto !important; /* Remove fixed minimum height */
+    padding: 8px 14px 6px 14px !important; /* Compact padding for longer posts */
+  }
+
+  /* Override default content-section padding for ALL posts */
+  .content-section {
+    padding: 5px 12px 4px 12px !important;
+    margin-bottom: 10px !important;
+  }
+
+  /* Read more/less link styling */
+  .read-more-link, .read-less-link {
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+
+  .read-more-link:hover, .read-less-link:hover {
+    color: #0056b3 !important;
+    text-decoration: none;
+  }
+
+  /* Aggressive spacing fixes with !important */
+  .content-section h2 {
+    margin-bottom: 2px !important; /* Force minimal spacing after title */
+    margin-top: 3px !important; /* Small spacing from metadata */
+  }
+
+  .media-body h2 {
+    margin-bottom: 2px !important;
+    margin-top: 3px !important;
+  }
+
+  .article-title {
+    margin-bottom: 2px !important;
+    margin-top: 3px !important;
+  }
+
+  /* Remove excessive paragraph margins with !important */
+  .article-content p {
+    margin-bottom: 5px !important;
+    margin-top: 0 !important;
+  }
+
+  .post-full-display {
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  .post-preview {
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  .post-full-display p {
+    margin-bottom: 5px !important;
+    margin-top: 0 !important;
+  }
+
+  .post-preview p {
+    margin-bottom: 5px !important;
+    margin-top: 0 !important;
+  }
+
+  /* Compact the entire post container */
+  .media.content-section {
+    padding-top: 8px;
+    padding-bottom: 6px;
+  }
+
+  /* Override Bootstrap's default spacing for tight layout */
+  .content-section .media-body {
+    padding-top: 0;
+    margin-top: 0;
+  }
+
+  /* Make sure short posts are really compact */
+  .short-content .article-content {
+    margin-bottom: 0;
+  }
+
+  .short-content .media-body {
+    min-height: auto;
+  }
+
+  /* Adjust image alignment for compact layout */
+  .article-img {
+    margin-right: 10px !important; /* Reduce image margin */
+    align-self: flex-start;
+    margin-top: 0 !important; /* Align with text */
+  }
+
+  /* Force compact layout for all article elements */
+  article.media {
+    padding: 5px 12px !important;
+    margin-bottom: 10px !important;
+  }
+
+  /* Remove default Bootstrap media spacing */
+  .media {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  .media-body {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  /* Target the specific article metadata */
+  .article-metadata {
+    margin-bottom: 1px !important;
+    padding-bottom: 1px !important;
+  }

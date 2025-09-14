@@ -1,0 +1,73 @@
+{% extends "blog/base.html" %}
+{% block content %}
+
+<!-- Get Back Button -->
+<div class="mb-3">
+    <a href="javascript:history.back()" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> Get Back
+    </a>
+</div>
+
+<!-- Main Post Content -->
+<article class="media content-section">
+    <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="Author Profile">
+    <div class="media-body">
+        <div class="article-metadata">
+            <a class="mr-2" href="#">{{ post.author }}</a>
+            <small class="text-muted">{{ post.date_posted|date:"F d, Y at H:i" }}</small>
+            
+            <!-- Edit/Delete buttons for post author -->
+            {% if user == post.author %}
+                <div class="float-right">
+                    <a href="{% url 'post-edit' post.pk %}" class="btn btn-outline-info btn-sm">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a href="{% url 'post-delete' post.pk %}" class="btn btn-outline-danger btn-sm">
+                        <i class="fas fa-trash"></i> Delete
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+        <h2 class="article-title">{{ post.title }}</h2>
+        <div class="article-content">{{ post.content|linebreaks }}</div>
+    </div>
+</article>
+
+<!-- Related Posts from Same Author -->
+{% if author_posts %}
+<div class="content-section mt-4">
+    <h4 class="mb-3">More posts by {{ post.author }}</h4>
+    {% for author_post in author_posts %}
+        <div class="media mb-3">
+            <div class="media-body">
+                <h6 class="mt-0">
+                    <a href="{% url 'post-detail' author_post.pk %}" class="text-dark">{{ author_post.title }}</a>
+                </h6>
+                <small class="text-muted">{{ author_post.date_posted|date:"M d, Y" }}</small>
+                <p class="mb-1">{{ author_post.content|truncatewords:15 }}</p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Other Related Posts -->
+{% if related_posts %}
+<div class="content-section mt-4">
+    <h4 class="mb-3">Other Recent Posts</h4>
+    {% for related_post in related_posts %}
+        <div class="media mb-3">
+            <img class="rounded-circle mr-3" src="{{ related_post.author.profile.image.url }}" width="32" height="32" alt="Author">
+            <div class="media-body">
+                <h6 class="mt-0">
+                    <a href="{% url 'post-detail' related_post.pk %}" class="text-dark">{{ related_post.title }}</a>
+                </h6>
+                <small class="text-muted">by {{ related_post.author }} on {{ related_post.date_posted|date:"M d, Y" }}</small>
+                <p class="mb-1">{{ related_post.content|truncatewords:15 }}</p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% endblock content %}

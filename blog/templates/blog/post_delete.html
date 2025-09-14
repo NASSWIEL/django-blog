@@ -1,0 +1,53 @@
+{% extends "blog/base.html" %}
+{% block content %}
+
+<!-- Get Back Button -->
+<div class="mb-3">
+    <a href="{% url 'post-detail' post.pk %}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> Get Back to Post
+    </a>
+</div>
+
+<div class="content-section">
+    <form method="POST">
+        {% csrf_token %}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4 text-danger">
+                <i class="fas fa-trash"></i> Delete Post
+            </legend>
+            <div class="alert alert-warning" role="alert">
+                <h5 class="alert-heading">
+                    <i class="fas fa-exclamation-triangle"></i> Are you sure?
+                </h5>
+                <p>You are about to delete the post "<strong>{{ post.title }}</strong>". This action cannot be undone.</p>
+                <hr>
+                <p class="mb-0">All data associated with this post will be permanently removed.</p>
+            </div>
+            
+            <!-- Post Preview -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">Post to be deleted:</h6>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ post.title }}</h5>
+                    <p class="card-text">{{ post.content|truncatewords:30 }}</p>
+                    <small class="text-muted">
+                        Posted on {{ post.date_posted|date:"F d, Y at H:i" }}
+                    </small>
+                </div>
+            </div>
+        </fieldset>
+        
+        <div class="form-group">
+            <button class="btn btn-danger" type="submit">
+                <i class="fas fa-trash"></i> Yes, Delete Post
+            </button>
+            <a href="{% url 'post-detail' post.pk %}" class="btn btn-outline-secondary">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,114 @@
+{% extends "blog/base.html" %}
+{% block content %} 
+{% for post in posts %}
+<article class="media content-section {% if post.content|length > 300 %}long-content{% else %}short-content{% endif %}" id="post-{{ post.pk }}" style="padding: 5px 12px 4px 12px !important; margin-bottom: 10px !important;">
+  <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="Author Profile" style="margin-right: 10px !important; margin-top: 0 !important;">
+  <div class="media-body" style="padding-top: 0 !important; margin-top: 0 !important;">
+    <div class="article-metadata" style="margin-bottom: 1px !important; padding-bottom: 1px !important;">
+      <a class="mr-2" href="#">{{ post.author }}</a>
+      <small class="text-muted">{{ post.date_posted|date:"F d, Y at H:i" }}</small>
+    </div>
+    <h2 style="margin-bottom: 2px !important; margin-top: 3px !important;"><a class="article-title" href="{% url 'post-detail' post.pk %}">{{ post.title }}</a></h2>
+    <div class="article-content" style="margin-top: 0 !important;">
+      {% if post.content|length > 300 %}
+        <!-- Long post (>300 chars): Show preview with Read more functionality -->
+        <p class="post-preview" id="preview-{{ post.pk }}" style="margin-bottom: 5px !important; margin-top: 0 !important;">
+          {{ post.content|truncatechars:250 }}
+          <a href="#" class="text-info read-more-link" onclick="expandPost({{ post.pk }}); return false;">Read more...</a>
+        </p>
+        <div class="post-full-content" id="full-{{ post.pk }}" style="display: none; margin-bottom: 0 !important; margin-top: 0 !important;">
+          <p style="margin-bottom: 5px !important; margin-top: 0 !important;">{{ post.content|linebreaks }}</p>
+          <a href="#" class="text-info read-less-link" onclick="collapsePost({{ post.pk }}); return false;">Show less</a>
+        </div>
+      {% else %}
+        <!-- Short post (≤300 chars): Show full content directly -->
+        <p class="post-full-display" style="margin-bottom: 0 !important; margin-top: 0 !important;">{{ post.content|linebreaks }}</p>
+      {% endif %}
+    </div>
+  </div>
+</article>
+{% empty %}
+<div class="content-section">
+  <p>No posts yet. <a href="{% url 'post-create' %}">Create the first post!</a></p>
+</div>
+{% endfor %} 
+
+<!-- Pagination -->
+{% if posts.has_other_pages %}
+<nav aria-label="Page navigation">
+  <ul class="pagination justify-content-center">
+    {% if posts.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page=1">&laquo; First</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ posts.previous_page_number }}">Previous</a>
+      </li>
+    {% endif %}
+    
+    {% for num in posts.paginator.page_range %}
+      {% if posts.number == num %}
+        <li class="page-item active">
+          <span class="page-link">{{ num }} <span class="sr-only">(current)</span></span>
+        </li>
+      {% elif num > posts.number|add:'-3' and num < posts.number|add:'3' %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+        </li>
+      {% endif %}
+    {% endfor %}
+    
+    {% if posts.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ posts.next_page_number }}">Next</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ posts.paginator.num_pages }}">Last &raquo;</a>
+      </li>
+    {% endif %}
+  </ul>
+</nav>
+
+<div class="text-center mt-3">
+  <small class="text-muted">
+    Page {{ posts.number }} of {{ posts.paginator.num_pages }} 
+    ({{ posts.paginator.count }} total posts)
+  </small>
+</div>
+{% endif %}
+
+<script>
+function expandPost(postId) {
+    const preview = document.getElementById('preview-' + postId);
+    const fullContent = document.getElementById('full-' + postId);
+    
+    if (preview && fullContent) {
+        preview.style.display = 'none';
+        fullContent.style.display = 'block';
+        
+        // Smooth scroll to the post for better UX
+        const postElement = document.getElementById('post-' + postId);
+        if (postElement) {
+            postElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+}
+
+function collapsePost(postId) {
+    const preview = document.getElementById('preview-' + postId);
+    const fullContent = document.getElementById('full-' + postId);
+    
+    if (preview && fullContent) {
+        preview.style.display = 'block';
+        fullContent.style.display = 'none';
+        
+        // Smooth scroll back to the post for better UX
+        const postElement = document.getElementById('post-' + postId);
+        if (postElement) {
+            postElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+}
+</script>
+
+{% endblock content %}

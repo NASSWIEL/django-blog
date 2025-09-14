@@ -1,0 +1,200 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="content-section">
+  <div class="media">
+    <img
+      class="rounded-circle account-img clickable-profile-img"
+      src="{{ user.profile.image.url }}"
+      alt="Profile Picture"
+      onclick="document.getElementById('id_image').click();"
+      style="cursor: pointer;"
+      title="Click to change profile picture"
+    />
+    <div class="media-body">
+      <h2 class="account-heading">{{ user.username }}</h2>
+      <p class="text-secondary">{{ user.email }}</p>
+    </div>
+  </div>
+  
+  <!-- Profile Update Form -->
+  <form method="POST" enctype="multipart/form-data" id="profileUpdateForm">
+    {% csrf_token %}
+    <fieldset class="form-group">
+      <legend class="border-bottom mb-4">Profile Information</legend>
+      
+      <!-- Basic Information -->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="id_username">Username</label>
+            {{ u_form.username }}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="id_email">Email</label>
+            {{ u_form.email }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Password Change Section -->
+      <div class="mt-4">
+        <h6 class="text-muted">Change Password (Optional)</h6>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="id_current_password">Current Password</label>
+              {{ u_form.current_password }}
+              <small class="form-text text-muted">{{ u_form.current_password.help_text }}</small>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="id_new_password1">New Password</label>
+              {{ u_form.new_password1 }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="id_new_password2">Confirm New Password</label>
+              {{ u_form.new_password2 }}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Hidden file input for profile image -->
+      <div style="display: none;">
+        {{ p_form.image }}
+      </div>
+
+      <!-- Form Errors Display -->
+      {% if u_form.non_field_errors %}
+        <div class="alert alert-danger">
+          {{ u_form.non_field_errors }}
+        </div>
+      {% endif %}
+    </fieldset>
+    <div class="form-group">
+      <button class="btn btn-outline-info" type="submit">Update</button>
+      <button class="btn btn-outline-secondary ml-2" type="button" onclick="cancelChanges()">Cancel Changes</button>
+    </div>
+  </form>
+</div>
+
+<!-- User's Posts Section -->
+<div class="content-section">
+  <h3>My Posts ({{ user_posts.count }})</h3>
+  {% for post in user_posts %}
+    <article class="media content-section {% if post.content|length > 300 %}long-content{% else %}short-content{% endif %}">
+      <div class="media-body">
+        <div class="article-metadata">
+          <small class="text-muted">{{ post.date_posted|date:"F d, Y at H:i" }}</small>
+          <!-- Edit/Delete buttons for each post -->
+          <div class="float-right">
+            <a href="{% url 'post-detail' post.pk %}" class="btn btn-outline-primary btn-sm">
+              <i class="fas fa-eye"></i> View
+            </a>
+            <a href="{% url 'post-edit' post.pk %}" class="btn btn-outline-info btn-sm">
+              <i class="fas fa-edit"></i> Edit
+            </a>
+            <a href="{% url 'post-delete' post.pk %}" class="btn btn-outline-danger btn-sm">
+              <i class="fas fa-trash"></i> Delete
+            </a>
+          </div>
+        </div>
+        <h2 class="article-title">
+          <a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a>
+        </h2>
+        <div class="article-content">
+          {% if post.content|length > 300 %}
+            <!-- Long post (>300 chars): Show preview with Read more functionality -->
+            <p class="post-preview" id="profile-preview-{{ post.pk }}">
+              {{ post.content|truncatechars:250 }}
+              <a href="#" class="text-info read-more-link" onclick="expandProfilePost({{ post.pk }}); return false;">Read more...</a>
+            </p>
+            <div class="post-full-content" id="profile-full-{{ post.pk }}" style="display: none;">
+              <p>{{ post.content|linebreaks }}</p>
+              <a href="#" class="text-info read-less-link" onclick="collapseProfilePost({{ post.pk }}); return false;">Show less</a>
+            </div>
+          {% else %}
+            <!-- Short post (≤300 chars): Show full content directly -->
+            <p class="post-full-display">{{ post.content|linebreaks }}</p>
+          {% endif %}
+        </div>
+      </div>
+    </article>
+  {% empty %}
+    <p class="text-muted">You haven't written any posts yet. <a href="{% url 'post-create' %}">Create your first post!</a></p>
+  {% endfor %}
+</div>
+
+<script>
+  // Store original form values for reset functionality
+  let originalValues = {};
+  
+  // Save original values when page loads
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('profileUpdateForm');
+    const inputs = form.querySelectorAll('input[type="text"], input[type="email"]');
+    
+    inputs.forEach(input => {
+      originalValues[input.name] = input.value;
+    });
+  });
+  
+  // Handle profile image upload
+  document.getElementById('id_image').addEventListener('change', function() {
+    if (this.files && this.files[0]) {
+      // Auto-submit the form when image is selected
+      document.getElementById('profileUpdateForm').submit();
+    }
+  });
+  
+  // Cancel changes - redirect to home page without saving
+  function cancelChanges() {
+    // Redirect to home page without saving any changes
+    window.location.href = "{% url 'blog-home' %}";
+  }
+  
+  // Reset form to original values (keeping for compatibility)
+  function resetForm() {
+    const form = document.getElementById('profileUpdateForm');
+    const inputs = form.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
+    
+    inputs.forEach(input => {
+      if (input.type === 'password') {
+        input.value = '';
+      } else if (originalValues[input.name]) {
+        input.value = originalValues[input.name];
+      }
+    });
+    
+    // Clear any file input
+    document.getElementById('id_image').value = '';
+  }
+
+  // Profile post expansion functions
+  function expandProfilePost(postId) {
+      const preview = document.getElementById('profile-preview-' + postId);
+      const fullContent = document.getElementById('profile-full-' + postId);
+      
+      if (preview && fullContent) {
+          preview.style.display = 'none';
+          fullContent.style.display = 'block';
+      }
+  }
+
+  function collapseProfilePost(postId) {
+      const preview = document.getElementById('profile-preview-' + postId);
+      const fullContent = document.getElementById('profile-full-' + postId);
+      
+      if (preview && fullContent) {
+          preview.style.display = 'block';
+          fullContent.style.display = 'none';
+      }
+  }
+</script>
+{% endblock content %}
